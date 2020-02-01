@@ -1,0 +1,13 @@
+package br.com.goodmann.lerarquivo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class LerarquivoApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(LerarquivoApplication.class, args);
+	}
+
+}
