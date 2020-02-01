@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 public class Vendedor extends BaseModel {
 
 	public Vendedor(String cpf, String name, BigDecimal salario) {
-		super.setTipo(Tipo.VENDEDOR);
 		super.setName(name);
 		this.cpf = cpf;
 		this.salario = salario;

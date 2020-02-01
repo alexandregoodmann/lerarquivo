@@ -1,14 +1,16 @@
 package br.com.goodmann.lerarquivo.model;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Venda extends BaseModel {
+public class Venda extends BaseModel implements Comparable<Venda> {
 
 	private Integer saleID;
 
-	private Double[] sale;
+	private BigDecimal valorTotal = BigDecimal.ZERO;
 
-	private List<ItemVenda> itens;
+	private List<ItemVenda> itens = new ArrayList<ItemVenda>();
 
 	public Integer getSaleID() {
 		return saleID;
@@ -18,20 +20,25 @@ public class Venda extends BaseModel {
 		this.saleID = saleID;
 	}
 
-	public Double[] getSale() {
-		return sale;
-	}
-
-	public void setSale(Double[] sale) {
-		this.sale = sale;
-	}
-
 	public List<ItemVenda> getItens() {
 		return itens;
 	}
 
 	public void setItens(List<ItemVenda> itens) {
 		this.itens = itens;
+	}
+
+	public BigDecimal getValorTotal() {
+		return valorTotal;
+	}
+
+	public void setValorTotal(BigDecimal valorTotal) {
+		this.valorTotal = valorTotal;
+	}
+
+	@Override
+	public int compareTo(Venda o) {
+		return this.valorTotal.compareTo(o.getValorTotal());
 	}
 
 }

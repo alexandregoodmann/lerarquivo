@@ -1,9 +1,8 @@
 package br.com.goodmann.lerarquivo.model;
 
 public class Cliente extends BaseModel {
-	
+
 	public Cliente(String cnpj, String name, String businessArea) {
-		super.setTipo(Tipo.CLIENTE);
 		super.setName(name);
 		this.cnpj = cnpj;
 		this.businessArea = businessArea;
