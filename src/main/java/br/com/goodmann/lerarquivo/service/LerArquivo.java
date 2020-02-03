@@ -3,16 +3,13 @@ package br.com.goodmann.lerarquivo.service;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
-import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.goodmann.lerarquivo.model.Cliente;
 import br.com.goodmann.lerarquivo.model.ItemVenda;
@@ -21,30 +18,21 @@ import br.com.goodmann.lerarquivo.model.Tipo;
 import br.com.goodmann.lerarquivo.model.Venda;
 import br.com.goodmann.lerarquivo.model.Vendedor;
 
-@Component
-public class LerArquivo {
+public class LerArquivo extends Thread {
 
-	// @Value("${separador.linha}")
 	private String separador = "#";
-	private List<Cliente> clientes;
-	private List<Vendedor> vendedores;
-	private List<Venda> vendas;
+	private Resumo resumo;
+	private File file;
 
-	private ObjectMapper mapper = new ObjectMapper();
+	public LerArquivo(File file) {
+		this.file = file;
+	}
 
-	public void lerArquivo() throws JsonProcessingException, IOException {
-
-		// Usados para escrever o arquivo de resumo
-		clientes = new ArrayList<Cliente>();
-		vendedores = new ArrayList<Vendedor>();
-		vendas = new ArrayList<Venda>();
-
-		// pega o arquivo
-		String dir = System.getProperty("user.dir");
-		File file = new File(dir + "/data/in/arquivo.txt");
+	public Resumo lerArquivo() throws JsonProcessingException, IOException {
 
 		// faz leitura das linhas
 		LineIterator it = FileUtils.lineIterator(file, "UTF-8");
+		this.resumo = new Resumo();
 		try {
 			while (it.hasNext()) {
 				String linha = it.nextLine();
@@ -54,28 +42,9 @@ public class LerArquivo {
 			it.close();
 		}
 
-		this.escreverArquivo();
-	}
+		this.criaResumo();
 
-	private void escreverArquivo() throws JsonProcessingException, IOException {
-
-		// cria obj resumo
-		Resumo resumo = new Resumo();
-		resumo.setQtdClienteEntrada(this.clientes.size());
-		resumo.setQtdVendedoresEntrada(this.vendedores.size());
-
-		//Primeiro e último objeto da lista são: pior vendedor e venda mais cara.
-		Collections.sort(vendas);
-		resumo.setPiorVendedor(vendas.get(0).getName());
-		resumo.setIdVendaMaisCara(vendas.get(vendas.size() - 1).getSaleID());
-
-		// convert para json e salva
-		String dir = System.getProperty("user.dir");
-		String nome = "out_arquivo.txt";
-		File file = new File(dir + "/data/out/" + nome);
-
-		FileUtils.write(file, mapper.writeValueAsString(resumo), "UTF-8");
-
+		return resumo;
 	}
 
 	private void parseLinha2Object(String linha) {
@@ -87,22 +56,38 @@ public class LerArquivo {
 		case VENDEDOR:
 			BigDecimal salario = new BigDecimal(vetLinha[3]);
 			Vendedor vendedor = new Vendedor(vetLinha[1], vetLinha[2], salario);
-			vendedores.add(vendedor);
+			this.resumo.getVendedores().add(vendedor);
 			break;
 
 		case CLIENTE:
 			Cliente cliente = new Cliente(vetLinha[1], vetLinha[2], vetLinha[3]);
-			clientes.add(cliente);
+			this.resumo.getClientes().add(cliente);
 			break;
 
 		case VENDA:
 			Venda venda = this.parseVenda(vetLinha);
-			vendas.add(venda);
+			this.resumo.getVendas().add(venda);
 			break;
 
 		default:
 			break;
 		}
+	}
+
+	private void criaResumo() throws JsonProcessingException, IOException {
+
+		// cria obj resumo
+		resumo.setQtdClienteEntrada(resumo.getClientes().size());
+		resumo.setQtdVendedoresEntrada(resumo.getVendedores().size());
+
+		// Primeiro e último objeto da lista são: pior vendedor e venda mais cara.
+		List<Venda> vendas = resumo.getVendas();
+		if (vendas.size() > 0) {
+			Collections.sort(vendas);
+			resumo.setPiorVendedor(vendas.get(0).getName());
+			resumo.setIdVendaMaisCara(vendas.get(vendas.size() - 1).getSaleID());
+		}
+
 	}
 
 	private Venda parseVenda(String[] vetLinha) {

@@ -1,26 +1,17 @@
 package br.com.goodmann.lerarquivo;
 
-import java.io.IOException;
-
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import br.com.goodmann.lerarquivo.service.LerArquivo;
+import br.com.goodmann.lerarquivo.service.DiretorioRunnable;
 
 @SpringBootTest
 class LerarquivoApplicationTests {
 
-	@Autowired
-	private LerArquivo ler;
-
-	private ObjectMapper mapper = new ObjectMapper();
-
 	@Test
-	void contextLoads() throws IOException {
-		ler.lerArquivo();
+	void contextLoads() {
+		DiretorioRunnable d = new DiretorioRunnable();
+		d.run();
 	}
 
 }
