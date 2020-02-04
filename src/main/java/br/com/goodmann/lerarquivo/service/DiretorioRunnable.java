@@ -48,7 +48,7 @@ public class DiretorioRunnable implements Runnable {
 					FileUtils.writeStringToFile(out, json, "UTF-8");
 
 					// move o arquivo para pasta out
-
+					FileUtils.moveFile(file, new File(dirOUT, file.getName()));
 					log.info("[ARQUIVO PROCESSADO] :" + out.getPath());
 				}
 			} catch (Exception e) {

@@ -1,1 +1,0 @@
-{"qtdClienteEntrada":2,"qtdVendedoresEntrada":2,"idVendaMaisCara":10,"piorVendedor":"Paulo"}

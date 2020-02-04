@@ -20,7 +20,6 @@ import br.com.goodmann.lerarquivo.model.Vendedor;
 
 public class LerArquivo extends Thread {
 
-	private String separador = "#";
 	private Resumo resumo;
 	private File file;
 
@@ -31,7 +30,7 @@ public class LerArquivo extends Thread {
 	public Resumo lerArquivo() throws JsonProcessingException, IOException {
 
 		// faz leitura das linhas
-		LineIterator it = FileUtils.lineIterator(file, "UTF-8");
+		LineIterator it = FileUtils.lineIterator(file, "ISO-8859-1");
 		this.resumo = new Resumo();
 		try {
 			while (it.hasNext()) {
@@ -49,7 +48,8 @@ public class LerArquivo extends Thread {
 
 	private void parseLinha2Object(String linha) {
 
-		String[] vetLinha = linha.split(separador);
+		//String[] vetLinha = linha.split("\u00E7");
+		String[] vetLinha = linha.split("\\ç");
 		Tipo tipo = Tipo.get(vetLinha[0]);
 
 		switch (tipo) {
@@ -117,4 +117,7 @@ public class LerArquivo extends Thread {
 		return venda;
 	}
 
+	public static void main(String[] args) {
+		System.out.println("ç".getBytes());
+	}
 }
